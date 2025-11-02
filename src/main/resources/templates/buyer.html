@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Dashboard - Krishi Bandhu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: white;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2%;
+        }
+        
+        .login-modal {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 500px;
+            margin: 5rem auto;
+        }
+        
+        .login-modal h2 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .dashboard {
+            display: none;
+        }
+        
+        .dashboard.active {
+            display: block;
+        }
+        
+        .search-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .search-form input {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .user-info {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .crop-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .crop-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .crop-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .crop-info {
+            line-height: 2;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .crop-info strong {
+            color: #333;
+        }
+        
+        .price {
+            font-size: 2rem;
+            color: #f5576c;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #43e97b;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+        
+        .badge-organic {
+            background: #43e97b;
+        }
+        
+        .badge-standard {
+            background: #667eea;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .tabs {
+            background: white;
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .tab {
+            padding: 1rem 2rem;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .navbar {
+                padding: 0.8rem 3%;
+                flex-wrap: wrap;
+            }
+            
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .nav-links a, .nav-links select {
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                padding: 0 3%;
+                margin: 1rem auto;
+            }
+            
+            .login-modal {
+                padding: 2rem;
+                margin: 3rem auto;
+            }
+            
+            .login-modal h2 {
+                font-size: clamp(1.3rem, 4vw, 1.8rem);
+            }
+            
+            .search-section {
+                padding: 1.5rem;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .search-form input {
+                min-width: 100%;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .crops-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .crop-card {
+                padding: 1.5rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                width: 100%;
+                padding: 0.9rem 1.5rem;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .navbar {
+                padding: 0.6rem 2%;
+            }
+            
+            .logo {
+                font-size: 1rem;
+            }
+            
+            .nav-links {
+                gap: 0.5rem;
+            }
+            
+            .nav-links a {
+                font-size: 0.8rem;
+            }
+            
+            .login-modal {
+                padding: 1.5rem;
+                margin: 2rem 1rem;
+            }
+            
+            .search-section {
+                padding: 1rem;
+            }
+            
+            .user-info {
+                padding: 1rem;
+            }
+            
+            .crop-card {
+                padding: 1.2rem;
+            }
+            
+            .price {
+                font-size: 1.5rem;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+            
+            input {
+                padding: 0.9rem;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .btn {
+                padding: 0.9rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (hover: none) and (pointer: coarse) {
+            .btn, .tab {
+                min-height: 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🌾 Krishi Bandhu - Buyer Dashboard</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/voice-test">Voice Test</a>
+            <select id="langSelect" onchange="changeLang()" style="padding: 0.5rem; border-radius: 5px;">
+                <option value="en">English</option>
+                <option value="hi">हिंदी</option>
+                <option value="te">తెలుగు</option>
+            </select>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+    
+    <!-- Login/Register Modal -->
+    <div id="loginModal" class="login-modal">
+        <h2>Login / Register</h2>
+        <form id="authForm">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="userName" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="userEmail" placeholder="your@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="userPassword" placeholder="Password" required>
+            </div>
+            <div class="form-group">
+                <label>Phone (Optional - 10 digits)</label>
+                <input type="tel" id="userPhone" placeholder="9876543210" pattern="[0-9]{10}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+            <button type="button" class="btn btn-success" id="registerBtn" onclick="registerBuyer()">Register</button>
+            <button type="button" class="btn" id="loginBtn" onclick="loginBuyer()" style="margin-top: 10px; background: #6c757d;">Login</button>
+        </form>
+    </div>
+    
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <div class="container">
+            <div class="user-info">
+                <div>
+                    <h3 id="userNameDisplay">Welcome!</h3>
+                    <p id="userEmailDisplay"></p>
+                </div>
+                <div>
+                    <span id="userStats"></span>
+                </div>
+            </div>
+            
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCrops">0</div>
+                    <div class="stat-label">Available Crops</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="myPurchases">0</div>
+                    <div class="stat-label">My Purchases</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSpent">₹0</div>
+                    <div class="stat-label">Total Spent</div>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('crops')">🌾 Browse Crops</button>
+                <button class="tab" onclick="switchTab('myorders')">📦 My Orders</button>
+            </div>
+            
+            <!-- Crops Tab -->
+            <div id="cropsTab" class="tab-content active">
+                <div class="search-section">
+                    <div class="search-form">
+                        <input type="text" id="searchInput" placeholder="Search crops by name...">
+                        <button class="btn" onclick="searchCrops()">🔍 Search</button>
+                        <button class="btn btn-success" onclick="loadCrops()">🔄 Refresh</button>
+                    </div>
+                </div>
+                
+                <div id="cropsContainer" class="crops-grid">
+                    <div class="loading">Loading crops...</div>
+                </div>
+            </div>
+            
+            <!-- My Orders Tab -->
+            <div id="myordersTab" class="tab-content">
+                <div id="ordersContainer">
+                    <div class="loading">No orders yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentBuyer = null;
+        let currentLang = 'en';
+        
+        function changeLang() {
+            currentLang = document.getElementById('langSelect').value;
+            updateLanguage();
+        }
+        
+        function updateLanguage() {
+            const translations = {
+                'en': {
+                    'welcome': 'Welcome',
+                    'name': 'Name',
+                    'email': 'Email',
+                    'password': 'Password',
+                    'phone': 'Phone',
+                    'register': 'Login / Register',
+                    'availableCrops': 'Available Crops',
+                    'myOrders': 'My Orders'
+                },
+                'hi': {
+                    'welcome': 'स्वागत है',
+                    'name': 'नाम',
+                    'email': 'ईमेल',
+                    'password': 'पासवर्ड',
+                    'phone': 'फोन',
+                    'register': 'लॉगइन / रजिस्टर',
+                    'availableCrops': 'उपलब्ध फसलें',
+                    'myOrders': 'मेरे ऑर्डर'
+                },
+                'te': {
+                    'welcome': 'స్వాగతం',
+                    'name': 'పేరు',
+                    'email': 'ఇమెయిల్',
+                    'password': 'పాస్ వర్డ్',
+                    'phone': 'ఫోన్',
+                    'register': 'లాగిన్ / నమోదు',
+                    'availableCrops': 'అందుబాటులో ఉన్న పంటలు',
+                    'myOrders': 'నా ఆర్డర్లు'
+                }
+            };
+            
+            // Update page content based on language
+            // This is a simple implementation
+            localStorage.setItem('lang', currentLang);
+        }
+        
+        window.onload = function() {
+            const savedLang = localStorage.getItem('lang');
+            if (savedLang) {
+                currentLang = savedLang;
+                document.getElementById('langSelect').value = savedLang;
+            }
+        };
+        
+        async function registerBuyer() {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const password = document.getElementById('userPassword').value;
+            const phone = document.getElementById('userPhone').value || '';
+            
+            if (!name || !email || !password) {
+                alert('Please fill in all required fields (Name, Email, Password)');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/buyers/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password,
+                        phone: phone || null
+                    })
+                });
+                
+                if (response.ok) {
+                    const buyer = await response.json();
+                    alert('Registration successful! Please login with your credentials.');
+                    // Clear form and show login message
+                    document.getElementById('userName').value = '';
+                    document.getElementById('userPassword').value = '';
+                    document.getElementById('userPhone').value = '';
+                } else {
+                    const errorData = await response.json().catch(() => ({ error: 'Registration failed' }));
+                    alert('Registration failed: ' + (errorData.error || errorData.message || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error('Registration error:', error);
+            }
+        }
+        
+        async function loginBuyer() {
+            const email = document.getElementById('userEmail').value;
+            const password = document.getElementById('userPassword').value;
+            
+            if (!email || !password) {
+                alert('Please enter email and password');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/buyers/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                if (response.ok) {
+                    const buyer = await response.json();
+                    currentBuyer = buyer;
+                    localStorage.setItem('buyer', JSON.stringify(buyer));
+                    showDashboard();
+                    loadCrops();
+                } else {
+                    const errorData = await response.json().catch(() => ({ error: 'Login failed' }));
+                    alert('Login failed: ' + (errorData.error || errorData.message || 'Invalid credentials'));
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error('Login error:', error);
+            }
+        }
+        
+        function showDashboard() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            
+            if (currentBuyer) {
+                document.getElementById('userNameDisplay').textContent = `Welcome, ${currentBuyer.name}!`;
+                document.getElementById('userEmailDisplay').textContent = currentBuyer.email;
+            }
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            if (tabName === 'crops') {
+                document.querySelector('.tab').classList.add('active');
+                document.getElementById('cropsTab').classList.add('active');
+            } else if (tabName === 'myorders') {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('myordersTab').classList.add('active');
+                loadMyOrders();
+            }
+        }
+        
+        async function loadCrops() {
+            const container = document.getElementById('cropsContainer');
+            container.innerHTML = '<div class="loading">Loading crops...</div>';
+            
+            try {
+                const response = await fetch('/api/crops/available');
+                const crops = await response.json();
+                
+                document.getElementById('totalCrops').textContent = crops.length;
+                
+                if (crops.length === 0) {
+                    container.innerHTML = '<div class="loading">No crops available at the moment.</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                crops.forEach(crop => {
+                    const cropCard = createCropCard(crop);
+                    container.appendChild(cropCard);
+                });
+            } catch (error) {
+                container.innerHTML = '<div class="loading">Error loading crops.</div>';
+            }
+        }
+        
+        async function searchCrops() {
+            const searchQuery = document.getElementById('searchInput').value;
+            if (!searchQuery) {
+                loadCrops();
+                return;
+            }
+            
+            const container = document.getElementById('cropsContainer');
+            container.innerHTML = '<div class="loading">Searching...</div>';
+            
+            try {
+                const response = await fetch(`/api/crops/search?cropName=${encodeURIComponent(searchQuery)}`);
+                const crops = await response.json();
+                
+                container.innerHTML = '';
+                crops.forEach(crop => {
+                    container.appendChild(createCropCard(crop));
+                });
+            } catch (error) {
+                container.innerHTML = '<div class="loading">Search failed.</div>';
+            }
+        }
+        
+        function createCropCard(crop) {
+            const card = document.createElement('div');
+            card.className = 'crop-card';
+            card.innerHTML = `
+                <h3>${crop.cropName}</h3>
+                <div class="crop-info">
+                    <div><strong>Farmer:</strong> ${crop.farmerName}</div>
+                    <div><strong>Available:</strong> ${crop.availableQty} kg</div>
+                    <div><strong>Total:</strong> ${crop.quantity} kg</div>
+                    <div><strong>Location:</strong> ${crop.location || 'Not specified'}</div>
+                    <div><strong>Quality:</strong> ${crop.qualityGrade || 'Standard'}</div>
+                    <div><strong>Harvest:</strong> ${crop.harvestDate || 'Recent'}</div>
+                </div>
+                <span class="badge ${crop.isOrganic ? 'badge-organic' : 'badge-standard'}">
+                    ${crop.isOrganic ? '🌿 Organic' : 'Standard'}
+                </span>
+                <div class="price">₹${crop.price} /kg</div>
+                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                    <input type="number" id="qty_${crop.id}" placeholder="Quantity (kg)" style="flex: 1; padding: 8px; border: 2px solid #ddd; border-radius: 8px;">
+                    <button class="btn btn-success" onclick="buyCrop(${crop.id}, '${crop.cropName}')" style="width: auto;">Buy Now</button>
+                </div>
+            `;
+            return card;
+        }
+        
+        async function buyCrop(cropId, cropName) {
+            if (!currentBuyer) {
+                alert('Please login first!');
+                return;
+            }
+            
+            const qtyInput = document.getElementById(`qty_${cropId}`);
+            const quantity = parseFloat(qtyInput.value);
+            
+            if (!quantity || quantity <= 0) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/transactions?cropId=${cropId}&buyerId=${currentBuyer.id}&quantity=${quantity}`);
+                if (response.ok) {
+                    const transaction = await response.json();
+                    alert(`✓ Successfully purchased ${quantity} kg of ${cropName}! Transaction ID: ${transaction.id}`);
+                    loadCrops();
+                    // Refresh orders if we're on the orders tab
+                    if (document.getElementById('myordersTab').classList.contains('active')) {
+                        loadMyOrders();
+                    }
+                    // Update stats
+                    const purchases = parseInt(document.getElementById('myPurchases').textContent) + 1;
+                    document.getElementById('myPurchases').textContent = purchases;
+                } else {
+                    const errorData = await response.json().catch(() => ({ error: 'Purchase failed' }));
+                    alert('Purchase failed: ' + (errorData.error || 'Please check quantity availability.'));
+                }
+            } catch (error) {
+                alert('Error processing purchase.');
+            }
+        }
+        
+        async function loadMyOrders() {
+            if (!currentBuyer) return;
+            
+            const container = document.getElementById('ordersContainer');
+            try {
+                const response = await fetch(`/api/transactions/buyer/${currentBuyer.id}`);
+                const orders = await response.json();
+                
+                container.innerHTML = '';
+                if (orders.length === 0) {
+                    container.innerHTML = '<div class="loading">No orders yet. Start shopping!</div>';
+                } else {
+                    orders.forEach(order => {
+                        const orderCard = document.createElement('div');
+                        orderCard.className = 'crop-card';
+                        const transactionDate = order.transactionDate ? new Date(order.transactionDate).toLocaleDateString() : 'N/A';
+                        const cropName = (order.crop && order.crop.cropName) ? order.crop.cropName : (order.cropName || 'Unknown Crop');
+                        const location = (order.crop && order.crop.location) ? order.crop.location : 'N/A';
+                        orderCard.innerHTML = `
+                            <h3>${escapeHtml(cropName)}</h3>
+                            <div class="crop-info">
+                                <div><strong>Quantity:</strong> ${order.quantity || 0} kg</div>
+                                <div><strong>Total Amount:</strong> ₹${order.totalAmount ? parseFloat(order.totalAmount).toFixed(2) : '0.00'}</div>
+                                <div><strong>Date:</strong> ${transactionDate}</div>
+                                <div><strong>Status:</strong> <span style="color: ${order.status === 'COMPLETED' ? 'green' : 'orange'}; font-weight: bold;">${order.status || 'PENDING'}</span></div>
+                                <div><strong>Location:</strong> ${escapeHtml(location)}</div>
+                            </div>
+                        `;
+                        container.appendChild(orderCard);
+                    });
+                    
+                    const total = orders.reduce((sum, o) => sum + (parseFloat(o.totalAmount) || 0), 0);
+                    const purchases = orders.length;
+                    document.getElementById('myPurchases').textContent = purchases;
+                    document.getElementById('totalSpent').textContent = '₹' + total.toFixed(2);
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="loading">Error loading orders.</div>';
+            }
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function logout() {
+            localStorage.removeItem('buyer');
+            location.reload();
+        }
+        
+        // Check if already logged in
+        window.onload = function() {
+            const savedBuyer = localStorage.getItem('buyer');
+            if (savedBuyer) {
+                currentBuyer = JSON.parse(savedBuyer);
+                showDashboard();
+                loadCrops();
+            }
+        };
+    </script>
+</body>
+</html>

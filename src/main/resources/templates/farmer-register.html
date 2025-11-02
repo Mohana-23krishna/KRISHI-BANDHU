@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Registration - Krishi Bandhu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .navbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.1);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+        
+        .navbar a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 3rem;
+            margin-top: 80px;
+        }
+        
+        .logo {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .language-selector {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .status {
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .phone-info {
+            background: #e7f3ff;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .navbar {
+                padding: 0.8rem 3%;
+                flex-wrap: wrap;
+            }
+            
+            .navbar a {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                padding: 2rem;
+                margin-top: 70px;
+                max-width: 100%;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            h1 {
+                font-size: clamp(1.5rem, 4vw, 2rem);
+                margin-bottom: 1.5rem;
+            }
+            
+            .language-selector {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .lang-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            input, select {
+                padding: 0.9rem;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .btn {
+                padding: 0.9rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .navbar {
+                padding: 0.6rem 2%;
+            }
+            
+            .navbar a {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+                margin-top: 60px;
+            }
+            
+            .logo {
+                font-size: 1.8rem;
+                margin-bottom: 0.8rem;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            
+            input, select {
+                padding: 0.8rem;
+            }
+            
+            .phone-info {
+                padding: 0.8rem;
+                font-size: 0.85em;
+            }
+        }
+        
+        @media (hover: none) and (pointer: coarse) {
+            .btn, .lang-btn {
+                min-height: 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/">🏠 Home</a>
+        <a href="/buyer">👤 Buyer Login</a>
+        <a href="/voice-test">📞 Voice Test</a>
+    </nav>
+    
+    <div class="container">
+        <div class="logo">🌾 Krishi Bandhu</div>
+        <h1>Farmer Registration</h1>
+        
+        <div class="language-selector">
+            <button class="lang-btn active" onclick="changeLanguage('en')">English</button>
+            <button class="lang-btn" onclick="changeLanguage('hi')">हिंदी</button>
+            <button class="lang-btn" onclick="changeLanguage('te')">తెలుగు</button>
+        </div>
+        
+        <div class="phone-info">
+            ℹ️ <span class="lang-en">You can also register via voice call</span>
+            <span class="lang-hi" style="display:none">आप वॉइस कॉल से भी रजिस्टर कर सकते हैं</span>
+            <span class="lang-te" style="display:none">మీరు వాయిస్ కాల్ ద్వారా కూడా నమోదు చేయవచ్చు</span>
+        </div>
+        
+        <form id="farmerForm">
+            <div class="form-group">
+                <label class="lang-en">Name</label>
+                <label class="lang-hi" style="display:none">नाम</label>
+                <label class="lang-te" style="display:none">పేరు</label>
+                <input type="text" id="farmerName" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="lang-en">Phone Number</label>
+                <label class="lang-hi" style="display:none">फोन नंबर</label>
+                <label class="lang-te" style="display:none">ఫోన్ నంబర్</label>
+                <input type="text" id="farmerPhone" placeholder="+919876543210" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="lang-en">Language</label>
+                <label class="lang-hi" style="display:none">भाषा</label>
+                <label class="lang-te" style="display:none">భాష</label>
+                <select id="farmerLanguage">
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी (Hindi)</option>
+                    <option value="te">తెలుగు (Telugu)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="lang-en">Address</label>
+                <label class="lang-hi" style="display:none">पता</label>
+                <label class="lang-te" style="display:none">చిరునామా</label>
+                <input type="text" id="farmerAddress">
+            </div>
+            
+            <div class="form-group">
+                <label class="lang-en">State</label>
+                <label class="lang-hi" style="display:none">राज्य</label>
+                <label class="lang-te" style="display:none">రాష్ట్రం</label>
+                <input type="text" id="farmerState">
+            </div>
+            
+            <button type="button" class="btn" onclick="registerFarmer()">
+                <span class="lang-en">🌾 Register as Farmer</span>
+                <span class="lang-hi" style="display:none">🌾 किसान के रूप में रजिस्टर करें</span>
+                <span class="lang-te" style="display:none">🌾 రైతుగా నమోదు చేయండి</span>
+            </button>
+        </form>
+        
+        <div id="status"></div>
+    </div>
+    
+    <script>
+        let currentLang = 'en';
+        
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.lang-en, .lang-hi, .lang-te').forEach(el => {
+                el.style.display = 'none';
+            });
+            document.querySelectorAll('.lang-' + lang).forEach(el => {
+                el.style.display = 'block';
+            });
+        }
+        
+        async function registerFarmer() {
+            const name = document.getElementById('farmerName').value;
+            const phone = document.getElementById('farmerPhone').value;
+            const language = document.getElementById('farmerLanguage').value;
+            const address = document.getElementById('farmerAddress').value;
+            const state = document.getElementById('farmerState').value;
+            
+            if (!name || !phone) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            const data = {
+                name: name,
+                phone: phone,
+                language: language,
+                address: address || '',
+                state: state || ''
+            };
+            
+            try {
+                const response = await fetch('/api/farmers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const farmer = await response.json();
+                    showStatus('success', 'Registration successful! Your Farmer ID: ' + farmer.id);
+                    setTimeout(() => {
+                        window.location.href = '/voice-test';
+                    }, 2000);
+                } else {
+                    const error = await response.text();
+                    showStatus('error', 'Registration failed: ' + error);
+                }
+            } catch (error) {
+                showStatus('error', 'Error: ' + error.message);
+            }
+        }
+        
+        function showStatus(type, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = 'status ' + type;
+            statusDiv.textContent = message;
+        }
+    </script>
+</body>
+</html>
+
+
